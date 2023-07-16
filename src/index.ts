@@ -5,8 +5,6 @@ import type {Node, Options} from './types';
 
 /* MAIN */
 
-//TODO: Support a maxAge option, efficiently
-
 class LRU<K, V> {
 
   /* VARIABLES */
@@ -15,8 +13,11 @@ class LRU<K, V> {
   private first: Node<K, V> | null;
   private last: Node<K, V> | null;
 
+  private maxAge: number;
   private maxSize: number;
   private onEviction?: ( key: K, value: V ) => void;
+
+  private intervalId?: ReturnType<typeof setInterval>;
 
   /* CONSTRUCTOR */
 
@@ -26,8 +27,17 @@ class LRU<K, V> {
     this.first = null;
     this.last = null;
 
+    this.maxAge = Math.max ( 0, options.maxAge ?? -1 );
     this.maxSize = Math.max ( 0, options.maxSize );
     this.onEviction = options.onEviction;
+
+    if ( this.maxAge ) {
+
+      this.intervalId = setInterval ( () => {
+        this.resize ( this.maxSize );
+      }, this.maxAge );
+
+    }
 
   }
 
@@ -79,6 +89,12 @@ class LRU<K, V> {
 
   }
 
+  dispose (): void {
+
+    clearInterval ( this.intervalId );
+
+  }
+
   get ( key: K ): V | undefined {
 
     const node = this.nodes.get ( key );
@@ -107,21 +123,41 @@ class LRU<K, V> {
 
     this.maxSize = Math.max ( 0, size );
 
-    if ( this.maxSize ) {
+    if ( this.size ) {
 
-      while ( this.size > this.maxSize ) {
+      if ( this.maxSize ) {
 
-        const node = this.first;
+        while ( this.size > this.maxSize ) {
 
-        if ( !node ) break;
+          const node = this.first;
 
-        this.delete ( node.key );
+          if ( !node ) break;
+
+          this.delete ( node.key );
+
+        }
+
+        if ( this.maxAge ) {
+
+          const now = Date.now ();
+
+          while ( true ) {
+
+            const node = this.first;
+
+            if ( !node || node.expiry > now ) break;
+
+            this.delete ( node.key );
+
+          }
+
+        }
+
+      } else {
+
+        this.clear ();
 
       }
-
-    } else {
-
-      this.clear ();
 
     }
 
@@ -135,6 +171,7 @@ class LRU<K, V> {
 
     if ( node ) { // Update
 
+      node.expiry = this.maxAge ? Date.now () + this.maxAge : 0;
       node.value = value;
 
       if ( this.last !== node ) {
@@ -167,9 +204,10 @@ class LRU<K, V> {
 
     } else { // Insert
 
-      const node = {
+      const node: Node<K, V> = {
         key,
         value,
+        expiry: this.maxAge ? Date.now () + this.maxAge : 0,
         prev: this.last,
         next: null
       };

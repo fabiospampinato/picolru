@@ -5,7 +5,7 @@ import LRU from '../dist/index.js';
 
 /* MAIN */
 
-for ( const [name, map] of [['map', new Map ()], ['lru', new LRU ({ maxSize: 100_000 })]] ) {
+for ( const [name, map] of [['map', new Map ()], ['lru', new LRU ({ maxSize: 100_000 })], ['lru.maxAge', new LRU ({ maxAge: 60_000, maxSize: 100_000 })]] ) {
 
   console.log ( '' );
   console.time ( name );
@@ -45,5 +45,7 @@ for ( const [name, map] of [['map', new Map ()], ['lru', new LRU ({ maxSize: 100
   console.timeEnd ( `${name}.clear` );
 
   console.timeEnd ( name );
+
+  map.dispose?.();
 
 }

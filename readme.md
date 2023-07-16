@@ -2,7 +2,7 @@
 
 A tiny LRU implementation that strives for simplicity and performance.
 
-An LRU instance works identically to a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) instance, except that a maximum of `maxSize` items are remembered, the least recently used items exceeding that size are deleted automatically, and a couple of extra methods are provided: `peek` and `resize`.
+An LRU instance works identically to a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) instance, except that a maximum of `maxSize` items for approximately `maxAge` milliseconds are remembered, the least recently used items exceeding that size are deleted automatically, and a few extra methods are provided: `dispose`, `peek` and `resize`.
 
 ## Install
 
@@ -18,6 +18,7 @@ import LRU from 'picolru';
 // Let's create an LRU
 
 const lru = new LRU<string, number> ({
+  maxAge: 60_000, // Maximum number of milliseconds to remember a stale entry for, approximately
   maxSize: 3, // Maximum number of entries to remember
   onEviction: ( key, value ) => { // Optional callback for deleted entries
     console.log ( 'Entry deleted:', {key, value} );
@@ -54,6 +55,8 @@ for ( const [key, value] of lru ) { // Entries are iterated in insertion order, 
 lru.clear ();
 
 lru.size; // => 0
+
+lru.dispose (); // Stops the internal timer used to clear out stale entries every maxAge milliseconds. This is only useful if a maxAge value is used
 
 // A couple of extra APIs are provided also
 

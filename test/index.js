@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import {describe} from 'fava';
+import {setTimeout as delay} from 'node:timers/promises';
 import {makeEntries, makeLRU} from './fixtures.js';
 
 /* MAIN */
@@ -193,6 +194,43 @@ describe ( 'PicoLRU', it => {
       t.deepEqual ( [value, key, self, this], [...entries.shift ().reverse (), lru, thiz] );
 
     }, thiz );
+
+  });
+
+  /* EXTRA */
+
+  it ( 'supports a maxAge parameter, inserting', async t => {
+
+    const lru = makeLRU ({ maxAge: 99 });
+
+    t.is ( lru.size, 5 );
+
+    await delay ( 100 );
+
+    t.is ( lru.size, 0 );
+
+    lru.dispose ();
+
+  });
+
+  it ( 'supports a maxAge parameter, updating', async t => {
+
+    const lru = makeLRU ({ maxAge: 99 });
+
+    await delay ( 50 );
+
+    t.is ( lru.size, 5 );
+    t.is ( lru.set ( 'a', 1 ), lru );
+
+    await delay ( 50 );
+
+    t.is ( lru.size, 1 );
+
+    await delay ( 100 );
+
+    t.is ( lru.size, 0 );
+
+    lru.dispose ();
 
   });
 
