@@ -49,6 +49,12 @@ class LRU<K, V> {
 
   }
 
+  get [Symbol.toStringTag] (): string {
+
+    return '[object LRU]';
+
+  }
+
   /* API */
 
   clear (): void {
