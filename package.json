@@ -25,6 +25,9 @@
     "used",
     "cache"
   ],
+  "dependencies": {
+    "isotimer": "^1.0.0",
+  },
   "devDependencies": {
     "fava": "^0.2.1",
     "tsex": "^3.0.1",

@@ -46,6 +46,4 @@ for ( const [name, map] of [['map', new Map ()], ['lru', new LRU ({ maxSize: 100
 
   console.timeEnd ( name );
 
-  map.dispose?.();
-
 }

@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import {setInterval, clearInterval, unrefInterval} from 'isotimer';
 import type {Node, Options} from './types';
 
 /* MAIN */
@@ -17,8 +18,6 @@ class LRU<K, V> {
   private maxSize: number;
   private onEviction?: ( key: K, value: V ) => void;
 
-  private intervalId?: ReturnType<typeof setInterval>;
-
   /* CONSTRUCTOR */
 
   constructor ( options: Options<K, V> ) {
@@ -33,9 +32,18 @@ class LRU<K, V> {
 
     if ( this.maxAge ) {
 
-      this.intervalId = setInterval ( () => {
-        this.resize ( this.maxSize );
+      const cleanupRef = new WeakRef ( this.resize.bind ( this, this.maxSize ) );
+
+      const intervalId = setInterval ( () => {
+        const cleanup = cleanupRef.deref ();
+        if ( cleanup ) {
+          cleanup ();
+        } else {
+          clearInterval ( intervalId );
+        }
       }, this.maxAge );
+
+      unrefInterval ( intervalId );
 
     }
 
@@ -92,12 +100,6 @@ class LRU<K, V> {
     this.onEviction?.( node.key, node.value );
 
     return true;
-
-  }
-
-  dispose (): void {
-
-    clearInterval ( this.intervalId );
 
   }
 

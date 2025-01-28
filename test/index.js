@@ -209,8 +209,6 @@ describe ( 'PicoLRU', it => {
 
     t.is ( lru.size, 0 );
 
-    lru.dispose ();
-
   });
 
   it ( 'supports a maxAge parameter, updating', async t => {
@@ -229,8 +227,6 @@ describe ( 'PicoLRU', it => {
     await delay ( 100 );
 
     t.is ( lru.size, 0 );
-
-    lru.dispose ();
 
   });
 
