@@ -109,7 +109,9 @@ class LRU<K, V> {
 
     if ( !node ) return;
 
-    this.set ( node.key, node.value );
+    if ( this.last !== node ) {
+      this.set ( node.key, node.value );
+    }
 
     return node.value;
 
