@@ -7,7 +7,7 @@ An LRU instance works identically to a [Map](https://developer.mozilla.org/en-US
 ## Install
 
 ```sh
-npm install --save picolru
+npm install picolru
 ```
 
 ## Usage
