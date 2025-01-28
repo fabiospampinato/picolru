@@ -2,7 +2,6 @@
 /* IMPORT */
 
 import {describe} from 'fava';
-import {setTimeout as delay} from 'node:timers/promises';
 import {makeEntries, makeLRU} from './fixtures.js';
 
 /* MAIN */
@@ -205,7 +204,7 @@ describe ( 'PicoLRU', it => {
 
     t.is ( lru.size, 5 );
 
-    await delay ( 100 );
+    await t.wait ( 100 );
 
     t.is ( lru.size, 0 );
 
@@ -215,16 +214,16 @@ describe ( 'PicoLRU', it => {
 
     const lru = makeLRU ({ maxAge: 99 });
 
-    await delay ( 50 );
+    await t.wait ( 50 );
 
     t.is ( lru.size, 5 );
     t.is ( lru.set ( 'a', 1 ), lru );
 
-    await delay ( 50 );
+    await t.wait ( 50 );
 
     t.is ( lru.size, 1 );
 
-    await delay ( 100 );
+    await t.wait ( 100 );
 
     t.is ( lru.size, 0 );
 
