@@ -4,6 +4,10 @@
 import {setInterval, clearInterval, unrefInterval} from 'isotimer';
 import type {Node, Options} from './types';
 
+/* HELPERS */
+
+const clearIntervalRegistry = new FinalizationRegistry ( clearInterval );
+
 /* MAIN */
 
 class LRU<K, V> {
@@ -35,15 +39,12 @@ class LRU<K, V> {
       const cleanupRef = new WeakRef ( this.resize.bind ( this, this.maxSize ) );
 
       const intervalId = setInterval ( () => {
-        const cleanup = cleanupRef.deref ();
-        if ( cleanup ) {
-          cleanup ();
-        } else {
-          clearInterval ( intervalId );
-        }
+        cleanupRef.deref ()?.();
       }, this.maxAge );
 
       unrefInterval ( intervalId );
+
+      clearIntervalRegistry.register ( this, intervalId );
 
     }
 
