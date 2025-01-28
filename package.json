@@ -3,7 +3,7 @@
   "repository": "github:fabiospampinato/picolru",
   "description": "A tiny LRU implementation that strives for simplicity and performance.",
   "license": "MIT",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "dist/index.js",
   "exports": "./dist/index.js",
