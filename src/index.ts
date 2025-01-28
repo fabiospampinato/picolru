@@ -36,10 +36,9 @@ class LRU<K, V> {
 
     if ( this.maxAge ) {
 
-      const cleanupRef = new WeakRef ( this.resize.bind ( this, this.maxSize ) );
-
+      const thizRef = new WeakRef ( this );
       const intervalId = setInterval ( () => {
-        cleanupRef.deref ()?.();
+        thizRef.deref ()?.resize ();
       }, this.maxAge );
 
       unrefInterval ( intervalId );
@@ -128,7 +127,7 @@ class LRU<K, V> {
 
   }
 
-  resize ( size: number ): this {
+  resize ( size: number = this.maxSize ): this {
 
     this.maxSize = Math.max ( 0, size );
 
