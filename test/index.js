@@ -229,4 +229,23 @@ describe ( 'PicoLRU', it => {
 
   });
 
+  it ( 'can be garbage collected', async t => {
+
+    let lru = makeLRU ({ maxAge: 90 });
+    let deleted = false;
+
+    const registry = new FinalizationRegistry ( () => deleted = true );
+
+    registry.register ( lru );
+
+    lru = null;
+
+    await t.wait ( 500 );
+    global.gc ();
+    await t.wait ( 500 );
+
+    t.true ( deleted );
+
+  });
+
 });
