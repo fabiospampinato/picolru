@@ -2,6 +2,7 @@
   "name": "picolru",
   "repository": "github:fabiospampinato/picolru",
   "description": "A tiny LRU implementation that strives for simplicity and performance.",
+  "license": "MIT",
   "version": "1.2.0",
   "type": "module",
   "main": "dist/index.js",
@@ -13,9 +14,8 @@
     "clean": "tsex clean",
     "compile": "tsex compile",
     "compile:watch": "tsex compile --watch",
-    "test": "tsex test",
-    "test:watch": "tsex test --watch",
-    "prepublishOnly": "tsex prepare"
+    "test": "node --expose-gc test/index.js",
+    "prepublishOnly": "npm run clean && npm run compile && npm run test"
   },
   "keywords": [
     "tiny",
@@ -26,11 +26,11 @@
     "cache"
   ],
   "dependencies": {
-    "isotimer": "^1.0.0",
+    "isotimer": "^1.0.0"
   },
   "devDependencies": {
-    "fava": "^0.2.1",
-    "tsex": "^3.0.1",
-    "typescript": "^5.1.6"
+    "fava": "^0.3.4",
+    "tsex": "^4.0.2",
+    "typescript": "^5.7.3"
   }
 }
